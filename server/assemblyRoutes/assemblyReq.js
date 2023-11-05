@@ -14,6 +14,7 @@ const assembly = axios.create({
 
 /// Routes to assemblyAI API to trascribe AV File. Hits URL directly. Free Trial.
 router.get("/", async (req, res) => {
+  console.log(req.query.audioUrl)
   const getTranscript = async () => {
     // Sends the audio file to AssemblyAI for transcription
     const response = await assembly.post("/transcript", {
@@ -30,7 +31,6 @@ router.get("/", async (req, res) => {
       } else if (transcriptStatus === "completed") {
         console.log("\nTranscription completed!\n")
         res.send(transcript.data)
-        console.log(`Your transcribed text:\n\n${transcriptText}`)
         clearInterval(checkCompletionInterval)
       }
     }, refreshInterval)

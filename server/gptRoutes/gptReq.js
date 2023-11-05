@@ -6,19 +6,24 @@ const { OpenAI } = require("openai");
 dotenv.config();
 
 router.get("/", async (req, res) => {
-  let gptResponse = await fetchRes(req.query.productName);
+  let gptResponse = await fetchRes(req.query.transcript_text);
   res.send(gptResponse);
 });
 
-async function fetchRes(productName) {
+async function fetchRes(transcript_text) {
   const prompt =
     `
+    The following is either a conversation, description or other related content types. Consider it a meeting or such and event and give 
+    me it's minutes.
+    \n\n
+    ${transcript_text} 
 `; // Include your prompt here
 
+  console.log(prompt);
   max_tokens = 200;
   const openai = new OpenAI({
     // apiKey: process.env.OPENAI_SECRET_KEY
-    apiKey: "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",
+    apiKey: "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",
   });
 
   const response = await openai.chat.completions.create({

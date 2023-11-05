@@ -3,32 +3,47 @@ import axios from "axios";
 import { useState } from "react";
 
 const BuildComponent = () => {
-  const [audio_url, setAudioURL] = useState("");
-
+  const [state1, setState1] = useState("");
+  const [audioUrl, setAudioUrl] = useState("");
   const handleButtonClick = async () => {
     try {
-      const passedURL = `http://localhost:4000/api/transcribe?audioUrl=`+ audio_url;
+      const passedURL = `http://localhost:4000/api/transcribe?audioUrl=`+ audioUrl;
       const response = await axios.get(passedURL);
       let output_string = response.data;
       console.log(output_string);
+      createMintutes(response.data);
     } catch (error) {
       console.error("There was an error with the request:", error);
     }
   };
 
+  const createMintutes = async (transcript) => {
+    try {
+      const passedURL = `http://localhost:4000/api/minutes?transcript_text=` + transcript.text;
+      const response = await axios.get(passedURL);
+      let output_string = response.data;
+      console.log(output_string);
+      setState1(output_string);
+    } catch (error) {
+      console.error("There was an error with the request:", error);
+    }
+  };
+
+
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>Project Minute</h1>
-      <input
-        type="text"
-        placeholder="Link to a video"
-        style={styles.input}
-        onChange={(e) => setAudioURL(e.target.value)}
-      />
-      <button style={styles.button} onClick={handleButtonClick}>
-        Generate
-      </button>
-    </div>
+    <h1 style={styles.heading}>Project Minute</h1>
+    <input
+      type="text"
+      placeholder="Link to a video"
+      style={styles.input}
+      onChange={(e) => setAudioUrl(e.target.value)}
+    />
+    <button style={styles.button} onClick={handleButtonClick}>
+      Generate
+    </button>
+    <p>{state1}</p>
+  </div>
   );
 };
 
