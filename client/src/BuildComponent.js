@@ -3,10 +3,11 @@ import axios from "axios";
 import { useState } from "react";
 
 const BuildComponent = () => {
+  const [audio_url, setAudioURL] = useState("");
 
   const handleButtonClick = async () => {
     try {
-      const passedURL = `http://localhost:4000/api/transcribe`;
+      const passedURL = `http://localhost:4000/api/transcribe?audioUrl=`+ audio_url;
       const response = await axios.get(passedURL);
       let output_string = response.data;
       console.log(output_string);
@@ -19,9 +20,10 @@ const BuildComponent = () => {
     <div style={styles.container}>
       <h1 style={styles.heading}>Project Minute</h1>
       <input
-        type="file"
-        placeholder="Audio File"
+        type="text"
+        placeholder="Link to a video"
         style={styles.input}
+        onChange={(e) => setAudioURL(e.target.value)}
       />
       <button style={styles.button} onClick={handleButtonClick}>
         Generate
