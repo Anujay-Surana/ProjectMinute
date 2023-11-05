@@ -1,9 +1,10 @@
 import React from "react";
 import axios from "axios";
 import { useState } from "react";
+import DisplayMinutes from "./DisplayMinutes";
+
 
 const BuildComponent = () => {
-  const [state1, setState1] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const handleButtonClick = async () => {
     try {
@@ -22,8 +23,26 @@ const BuildComponent = () => {
       const passedURL = `http://localhost:4000/api/minutes?transcript_text=` + transcript.text;
       const response = await axios.get(passedURL);
       let output_string = response.data;
-      console.log(output_string);
-      setState1(output_string);
+      // Llist of all Headings
+      const headingArr = ['1. Date and Time:', '2. Participants:', '3. Purpose of the meeting:', '4. Agenda Items and Topics Discussed:', '5. Key Decisions and Action Items:', '6. Next Meetindg Date and Place:', '7. Documents to be Included in the Report:', 'Summary:']
+      // Output dictionary
+      let output_dict = {};
+      // Getting all the values of each heading
+      for (let i = 0; i < headingArr.length - 1; i++) {
+        // Fetch the index of the heading content and the index of the start of the next heading
+        let prevIndex = output_string.indexOf(headingArr[i]) + headingArr[i].length;
+        let nextIndex = output_string.indexOf(headingArr[i + 1]);
+        let Outputdata = output_string.slice(prevIndex,nextIndex);
+        // Split output on basis of \n so that we can get a list of all values
+        output_dict[headingArr[i]] = Outputdata.split("\n")
+      }
+      // Set Summary Value
+      output_dict['Summary:'] = output_string.slice(output_string.indexOf('Summary:')) 
+
+      return (
+        // Display DisplayMinutes
+        <DisplayMinutes output_dict={output_dict} />
+      );
     } catch (error) {
       console.error("There was an error with the request:", error);
     }
@@ -42,7 +61,6 @@ const BuildComponent = () => {
     <button style={styles.button} onClick={handleButtonClick}>
       Generate
     </button>
-    <p>{state1}</p>
   </div>
   );
 };
